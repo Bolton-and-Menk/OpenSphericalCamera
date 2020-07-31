@@ -16,12 +16,14 @@ from threading import Timer
 import netifaces
 from munch import munchify
 
-#from .theta import RicohThetaS
 from .logger import logger
 
 CAMERAS = munchify({
     'Insta360Pro2': {
-        'IPs': ['192.168.1.188'],
+        'IPs': [
+            '192.168.1.188',
+            '192.168.43.1',
+            ],
         'name': 'Insta360 Pro 2',
         'classname': 'Insta360Pro2'
         },
@@ -30,14 +32,7 @@ CAMERAS = munchify({
         'name': 'Ricoh Theta',
         'classname': 'RicohThetaS'
         },
-    'Test': {
-        'IPs': ['192.168.15.1'],
-        'name': 'test',
-        'classname': 'Test'
-        }
-})
-
-
+    })
 
 
 def iter_gateway_ips():
@@ -58,6 +53,7 @@ class Test:
     def __init__(self):
         self.test = 'test'
 
+
 def find_cameras():
     """ Try to detect spherical cameras attached to network interfaces.
 
@@ -65,7 +61,7 @@ def find_cameras():
         List of munches:
             {'IP': IP to reach the camera,
              'name':  Name of camera,
-             'camera': Uninitialized camera class
+             'camera': Name of camera class
              }
 
     """
@@ -81,7 +77,7 @@ def find_cameras():
                 cam_munch = munchify({
                     'IP': ip,
                     'name': cam.name,
-                    'camera': globals()[cam.classname]
+                    'camera': cam.classname
                 })
                 cams.append(cam_munch)
     return cams
@@ -95,7 +91,6 @@ class RepeatedTimer:
         self.args       = args
         self.kwargs     = kwargs
         self.is_running = False
-        self.is_waiting = False
 
 
     def _run(self):
@@ -107,6 +102,7 @@ class RepeatedTimer:
     def start(self):
         if not self.is_running:
             self._timer = Timer(self.interval, self._run)
+            self._timer.daemon = True
             self._timer.start()
             self.is_running = True
 

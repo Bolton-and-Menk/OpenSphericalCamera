@@ -15,6 +15,12 @@ __version__ = '.'.join((__major_version__,
                         __minor_version__,
                         __change_version__))
 
-from osc import OpenSphericalCamera
-from theta import RicohThetaS
+from munch import munchify
+##from osc import OpenSphericalCamera
+##from theta import RicohThetaS
+from .insta import Insta360Pro2
+
+cams = munchify({
+    'Insta360Pro2': Insta360Pro2,
+    })
 
