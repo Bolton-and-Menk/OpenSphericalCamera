@@ -34,13 +34,9 @@ After you import the library, you can use the commands like this:
   camera.closeSession()
 """
 
-from __future__ import absolute_import
-from __future__ import print_function
 import json
 import requests
 import time
-import six
-from six.moves import range
 
 __author__ = 'Haarm-Pieter Duiker'
 __copyright__ = 'Copyright (C) 2016 - Duiker Research Corp'
@@ -315,7 +311,7 @@ class OpenSphericalCamera:
         Generate the URI to send to the Open Spherical Camera.
         All calls start with /osc/
         """
-        osc_request = six.text_type("/osc/" + url_request)
+        osc_request = unicode("/osc/" + url_request)
 
         url_base = "http://%s:%s" % (self._ip, self._httpPort if not update else self._httpUpdatesPort)
 
@@ -323,8 +319,8 @@ class OpenSphericalCamera:
             if osc_request in self._api:
                 url = url_base + osc_request
             else:
-                print(( "OSC Error - Unsupported API  : %s" % osc_request ))
-                print(( "OSC Error - Supported API is : %s" % self._api ))
+                print( "OSC Error - Unsupported API  : %s" % osc_request )
+                print( "OSC Error - Supported API is : %s" % self._api )
                 url = None
         else:
                 url = url_base + osc_request
@@ -333,7 +329,7 @@ class OpenSphericalCamera:
 
     def _httpError(self, exception):
         print( "HTTP Error - begin" )
-        print(( repr(exception) ))
+        print( repr(exception) )
         print( "HTTP Error - end" )
 
     def _oscError(self, request):
@@ -342,14 +338,14 @@ class OpenSphericalCamera:
         try:
             error = request.json()
 
-            print(( "OSC Error - HTTP Status : %s" % status))
+            print( "OSC Error - HTTP Status : %s" % status)
             if 'error' in error:
-                print(( "OSC Error - Code        : %s" % error['error']['code']))
-                print(( "OSC Error - Message     : %s" % error['error']['message']))
-            print(( "OSC Error - Name        : %s" % error['name']))
-            print(( "OSC Error - State       : %s" % error['state']))
+                print( "OSC Error - Code        : %s" % error['error']['code'])
+                print( "OSC Error - Message     : %s" % error['error']['message'])
+            print( "OSC Error - Name        : %s" % error['name'])
+            print( "OSC Error - State       : %s" % error['state'])
         except:
-            print(( "OSC Error - HTTP Status : %s" % status))
+            print( "OSC Error - HTTP Status : %s" % status)
 
         return status
 
@@ -367,7 +363,7 @@ class OpenSphericalCamera:
         url = self._request("info")
         try:
             req = requests.get(url)
-        except Exception as e:
+        except Exception, e:
             self._httpError(e)
             return None
 
@@ -389,7 +385,7 @@ class OpenSphericalCamera:
         url = self._request("state")
         try:
             req = requests.post(url)
-        except Exception as e:
+        except Exception, e:
             self._httpError(e)
             return None
 
@@ -413,7 +409,7 @@ class OpenSphericalCamera:
         body = json.dumps({"id": command_id})
         try:
             req = requests.post(url, data=body)
-        except Exception as e:
+        except Exception, e:
             self._httpError(e)
             return None
 
@@ -439,7 +435,7 @@ class OpenSphericalCamera:
         body = json.dumps({"stateFingerprint": self.fingerprint})
         try:
             req = requests.post(url, data=body)
-        except Exception as e:
+        except Exception, e:
             self._httpError(e)
             return False
 
@@ -447,11 +443,11 @@ class OpenSphericalCamera:
             response = req.json()
             newFingerprint = response['stateFingerprint']
             if newFingerprint != self.fingerprint:
-                print(( "Update - new, old fingerprint : %s, %s" % (newFingerprint, self.fingerprint) ))
+                print( "Update - new, old fingerprint : %s, %s" % (newFingerprint, self.fingerprint) )
                 self.fingerprint = newFingerprint
                 response = True
             else:
-                print(( "No update - fingerprint : %s" % self.fingerprint ))
+                print( "No update - fingerprint : %s" % self.fingerprint )
                 response = False
         else:
             self._oscError(req)
@@ -476,7 +472,7 @@ class OpenSphericalCamera:
             elif not status or "error" in status:
                 print( "Status failed. Stopping wait." )
                 break
-            print(( "%d - %s" % (i, status) ))
+            print( "%d - %s" % (i, status) )
             time.sleep( 1 )
 
         return
@@ -495,7 +491,7 @@ class OpenSphericalCamera:
              })
         try:
             req = requests.post(url, data=body)
-        except Exception as e:
+        except Exception, e:
             self._httpError(e)
             self.sid = None
             return self.sid
@@ -521,7 +517,7 @@ class OpenSphericalCamera:
              })
         try:
             req = requests.post(url, data=body)
-        except Exception as e:
+        except Exception, e:
             self._httpError(e)
             return None
 
@@ -547,7 +543,7 @@ class OpenSphericalCamera:
              })
         try:
             req = requests.post(url, data=body)
-        except Exception as e:
+        except Exception, e:
             self._httpError(e)
             return None
 
@@ -580,7 +576,7 @@ class OpenSphericalCamera:
              })
         try:
             req = requests.post(url, data=body)
-        except Exception as e:
+        except Exception, e:
             self._httpError(e)
             return None
 
@@ -625,7 +621,7 @@ class OpenSphericalCamera:
              })
         try:
             req = requests.post(url, data=body)
-        except Exception as e:
+        except Exception, e:
             self._httpError(e)
             return None
 
@@ -651,7 +647,7 @@ class OpenSphericalCamera:
              })
         try:
             req = requests.post(url, data=body)
-        except Exception as e:
+        except Exception, e:
             self._httpError(e)
             return None
 
@@ -681,12 +677,12 @@ class OpenSphericalCamera:
              }
              })
         fileName = fileUri.split("/")[1]
-        print(( "Writing image : %s" % fileName ))
+        print( "Writing image : %s" % fileName )
 
         acquired = False
         try:
             response = requests.post(url, data=body, stream=True)
-        except Exception as e:
+        except Exception, e:
             self._httpError(e)
             return acquired
 
@@ -715,7 +711,7 @@ class OpenSphericalCamera:
              })
         try:
             req = requests.post(url, data=body)
-        except Exception as e:
+        except Exception, e:
             self._httpError(e)
             return None
 
@@ -740,7 +736,7 @@ class OpenSphericalCamera:
             response = None
             return response
 
-        print(( "setOption - %s : %s" % (option, value) ))
+        print( "setOption - %s : %s" % (option, value) )
 
         url = self._request("commands/execute")
         body = json.dumps({"name": "camera.setOptions",
@@ -753,7 +749,7 @@ class OpenSphericalCamera:
              })
         try:
             req = requests.post(url, data=body)
-        except Exception as e:
+        except Exception, e:
             self._httpError(e)
             return None
 
@@ -784,7 +780,7 @@ class OpenSphericalCamera:
              })
         try:
             req = requests.post(url, data=body)
-        except Exception as e:
+        except Exception, e:
             self._httpError(e)
             return None
 
@@ -804,7 +800,7 @@ class OpenSphericalCamera:
         url = self._request("state")
         try:
             req = requests.post(url)
-        except Exception as e:
+        except Exception, e:
             self._httpError(e)
             self.sid = None
             return None
@@ -831,7 +827,7 @@ class OpenSphericalCamera:
              })
         try:
             req = requests.post(url, data=body)
-        except Exception as e:
+        except Exception, e:
             self._httpError(e)
             return None
 

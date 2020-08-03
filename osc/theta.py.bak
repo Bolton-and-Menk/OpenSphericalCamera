@@ -45,12 +45,11 @@ After you import the library, you can use the commands like this:
   thetas.closeSession()
 """
 
-from __future__ import absolute_import
 import json
 import requests
 import timeit
 
-from . import osc
+import osc
 
 __author__ = 'Haarm-Pieter Duiker'
 __copyright__ = 'Copyright (C) 2016 - Duiker Research Corp'
@@ -151,7 +150,7 @@ class RicohThetaS(osc.OpenSphericalCamera):
              })
         try:
             req = requests.post(url, data=body)
-        except Exception as e:
+        except Exception, e:
             self._httpError(e)
             return None
 
@@ -177,7 +176,7 @@ class RicohThetaS(osc.OpenSphericalCamera):
              })
         try:
              req = requests.post(url, data=body)
-        except Exception as e:
+        except Exception, e:
             self._httpError(e)
             return None
 
@@ -207,7 +206,7 @@ class RicohThetaS(osc.OpenSphericalCamera):
              })
         try:
              req = requests.post(url, data=body)
-        except Exception as e:
+        except Exception, e:
             self._httpError(e)
             return None
 
@@ -234,7 +233,7 @@ class RicohThetaS(osc.OpenSphericalCamera):
              })
         try:
             req = requests.post(url, data=body)
-        except Exception as e:
+        except Exception, e:
             self._httpError(e)
             return None
 
@@ -269,7 +268,7 @@ class RicohThetaS(osc.OpenSphericalCamera):
 
             try:
                 response = requests.post(url, data=body, stream=True)
-            except Exception as e:
+            except Exception, e:
                 self._httpError(e)
                 return acquired
 
@@ -315,7 +314,7 @@ class RicohThetaS(osc.OpenSphericalCamera):
 
         try:
             response = requests.post(url, data=body, stream=True)
-        except Exception as e:
+        except Exception, e:
             self._httpError(e)
             return acquired
 
