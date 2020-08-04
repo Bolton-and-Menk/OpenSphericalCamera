@@ -47,8 +47,11 @@ class Insta360Pro2:
         if resp.ok:
             resp = munchify(resp.json())
             logger.debug(resp)
-            if resp.state == 'exception':
+            if hasattr(resp, 'state') and resp.state == 'exception':
                 raise RuntimeError(resp)
+            elif hasattr(resp, 'error') and resp.error.code == 'disabledCommand' and resp.error.description == 'camera not connected':
+                self.disconnect()
+                self.connect()
             else:
                 return resp
         else:
@@ -115,11 +118,17 @@ class Insta360Pro2:
 
 
     def get_info(self):
+        """ Populate self.info
+
+        """
         self.info = self.do_post(self.infourl)
         return self.info
 
 
     def take_picture(self):
+        """ Take a 360 picture in max resolution JPEG.
+
+        """
         params = {
           "name": "camera._takePicture",
           "parameters":{
@@ -133,11 +142,11 @@ class Insta360Pro2:
         resp = self.do_post(self.url, json=params)
 
 
-    def start_interval(self, interval):
+    def start_interval(self, interval=2000):
         """ Start an interval capture.
 
         Args:
-            interval (int): Time interval in ms.
+            interval (int): Default 2000. Time interval in ms.
 
         """
         params = {
@@ -151,14 +160,17 @@ class Insta360Pro2:
                        'width': 4000},
             'stabilization': False,
             'storageSpeedTest': False,
-            'timelapse': {'enable': True, 'interval': 2000}}}
+            'timelapse': {'enable': True, 'interval': interval}}}
         resp = self.do_post(self.url, json=params)
         return resp
 
 
     def stop_interval(self):
+        """ Stop an ongoing capture.
+
+        """
         if self.is_capturing:
-            resp = self.do_post(self.url, json={'name': 'camera._startRecording'})
+            resp = self.do_post(self.url, json={'name': 'camera._stopRecording'})
             return resp
 
 
